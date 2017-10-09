@@ -1,7 +1,10 @@
 package com.epam.javaacademy;
 
+import java.util.HashMap;
+
 public class Input {
 
+	HashMap<String, Integer> sCounter;
 	String command;	
 	String parameter;
 	
@@ -12,9 +15,7 @@ public class Input {
 		this.command=com;
 		this.parameter=param;
 		
-	}
-	
-	
+	}	
 	
 	public String getCommand() {
 		return command;

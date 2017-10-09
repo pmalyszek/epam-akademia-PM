@@ -11,13 +11,13 @@ import java.util.Scanner;
 
 public class Utils {
 	
+	static String url=System.getProperty("user.dir");
 	Scanner scanner=new Scanner(System.in);
-	String url=System.getProperty("user.dir");
-	//URL ur=get
 	String command;	
 	String parameter;
 	String prompt="$>";
-	HashMap<String, Integer> sCounter;
+	static HashMap<String, Integer> sCounter;
+	Action action;
 	boolean isPromptCwd=false;
 	private Input input;
 	
@@ -60,40 +60,41 @@ public class Utils {
 		
 		switch(input.getCommand()){
 		case "dir":
-			File directory=new File(url);
-			File[] fileList=directory.listFiles();
-			System.out.println("Content of "+url);
-			for(File f:fileList){
-				if(f.isDirectory()){
-					System.out.print("DIR");
-				}
-				else{
-					System.out.print("FIL");
-				}
-				System.out.print("\t"+f.getName()+"\n");
+			
+			action=new Dir();
+			action.doSomething(input);
+			sCounter.replace(command,sCounter.get(command).intValue()+1 );
+			break;
+		
+		case "cd":
+
+			action=new Cd();
+			action.doSomething(input);
+			sCounter.replace(command,sCounter.get(command).intValue()+1 );
+			if(isPromptCwd)
+			{
+				action=new Prompt();
+				action.doSomething(input);
+				prompt=((Prompt) action).getPrompt();
+				isPromptCwd=((Prompt) action).getIsPromptCwd();
 			}
 			
 			break;
 		
-		case "cd":
-			url=changePath(url, parameter);
-			if(isPromptCwd)
-				prompt=changePrompt(url,"$cwd");
-			//System.out.print(prompt);
-			
-			break;
-		
 		case "prompt":
-			prompt=changePrompt(url,input.getParameter());
-			//System.out.println("User said: ");
+			action=new Prompt();
+			action.doSomething(input);
+			prompt=((Prompt) action).getPrompt();
+			sCounter.replace(command,sCounter.get(command).intValue()+1 );
+			isPromptCwd=((Prompt) action).getIsPromptCwd();
 			break;
 			
 		case "tree":
 			
-			File path=new File(url);
-			listFileTree(path,1);
+			action=new Tree();
+			action.doSomething(input);
+			sCounter.replace(command,sCounter.get(command).intValue()+1 );
 			
-			System.out.println("User said: ");
 			break;
 		
 		case "exit":
@@ -102,67 +103,15 @@ public class Utils {
 			break;
 		
 		case "statistics":
-			Iterator it=sCounter.entrySet().iterator();
-			while(it.hasNext()){
-				Map.Entry pair=(Map.Entry)it.next();
-				System.out.println(pair.getKey()+":"+pair.getValue());
-			}
-			
+			action=new Statistics();
+			action.doSomething(input);	
+			sCounter.replace(command,sCounter.get(command).intValue()+1 );
 			break;
 		default: 
 			System.out.println(input.getCommand()+": unknown commnd");
 			break;
 		}
-		sCounter.replace(command,sCounter.get(command).intValue()+1 );
-	}
-		
 	
-	private void listFileTree(File path, int count) {
-
-		File[] listPath=path.listFiles();
-		for(File f:listPath){
-			if(!f.isDirectory())
-			{
-				for(int i=0;i<count;i++)
-				System.out.print("-");
-				System.out.print(f.getName()+"\n");
-			}
-				
-			else{
-				listFileTree(f,count+1);
-			}
-		}		
-	}
-	private String changePrompt(String url, String param) {
-		
-		if(param.equals("$cwd"))
-			prompt=url+">";
-		else if(param.equals("reset"))
-			prompt="$"+">";
-		else
-			prompt=param+">";
-		this.isPromptCwd=true;
-		return prompt;
-	}
-	private static String changePath(String url, String parameter) {
-
-		if(parameter!=null)
-		{if(parameter.equals("..")){
-			url=url.substring(0, url.lastIndexOf("\\"));
-		}
-		else
-		{
-			File directory=new File(url);
-			File[] fileList=directory.listFiles();
-			for(File f: fileList){
-				if(f.isDirectory()&&f.getName().equals(parameter))
-				{	url=url.concat("\\");
-					url=url.concat(parameter);	
-				}
-			}
-					
-		}}
-		return url;
 	}
 	
 	public void newInput(String userInput){
@@ -175,9 +124,7 @@ public class Utils {
 			parameter=null;
 		}
 		input.setCommand(command);
-	
-		
-		
+			
 	}
 	public String print()
 	{
