@@ -5,14 +5,23 @@ import java.util.Scanner;
 
 public class Shell {
 
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner scanner=new Scanner(System.in);
 		String url="C:\\\\Users\\Przemek\\workspace\\epam-akademia";
 		while(true){
+			
 			System.out.print("$>");
+			
 			String userInput=scanner.nextLine();
-			switch(userInput){
+			String condition;
+			try{
+				condition=userInput.substring(0, userInput.indexOf(" "));	
+			}catch(StringIndexOutOfBoundsException e){
+				condition=userInput;
+			}
+			switch(condition){
 			case "dir":
 				File directory=new File(url);
 				File[] fileList=directory.listFiles();
@@ -31,7 +40,10 @@ public class Shell {
 				break;
 			
 			case "cd":
-				System.out.println("User said: "+userInput);
+				String parameter=userInput.substring(userInput.indexOf(" ")+1);
+				url=changePath(url, parameter);
+				//System.out.println(url);
+				//System.out.println("User said: "+userInput);
 				break;
 			
 			case "prompt":
@@ -44,6 +56,7 @@ public class Shell {
 			
 			case "exit":
 				System.out.println("User said: "+userInput);
+				
 				break;
 			
 			case "statistics":
@@ -55,6 +68,19 @@ public class Shell {
 			}
 			
 		}
+	}
+
+	private static String changePath(String url, String parameter) {
+
+		if(parameter.equals("..")){
+			url=url.substring(0, url.lastIndexOf("\\"));
+		}
+		else
+		{
+			url=url.concat("\\");
+			url=url.concat(parameter);			
+		}
+		return url;
 	}
 
 }
