@@ -16,7 +16,7 @@ public class Shell {
 			case "dir":
 				File directory=new File(url);
 				File[] fileList=directory.listFiles();
-				
+				System.out.println("Content of "+url);
 				for(File f:fileList){
 					if(f.isDirectory()){
 						System.out.print("DIR");
