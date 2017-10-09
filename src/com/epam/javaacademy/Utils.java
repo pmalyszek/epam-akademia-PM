@@ -1,6 +1,7 @@
 package com.epam.javaacademy;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,7 +12,8 @@ import java.util.Scanner;
 public class Utils {
 	
 	Scanner scanner=new Scanner(System.in);
-	String url="C:\\\\Users\\Przemek\\workspace\\epam-akademia";
+	String url=System.getProperty("user.dir");
+	//URL ur=get
 	String command;	
 	String parameter;
 	String prompt="$>";
@@ -153,10 +155,12 @@ public class Utils {
 			File directory=new File(url);
 			File[] fileList=directory.listFiles();
 			for(File f: fileList){
-				
+				if(f.isDirectory()&&f.getName().equals(parameter))
+				{	url=url.concat("\\");
+					url=url.concat(parameter);	
+				}
 			}
-			url=url.concat("\\");
-			url=url.concat(parameter);			
+					
 		}}
 		return url;
 	}

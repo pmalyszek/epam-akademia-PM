@@ -11,7 +11,6 @@ public class Shell {
 		Scanner scanner=new Scanner(System.in);
 		String input;
 		Utils com;
-		
 		System.out.print("$>");
 		
 		String userInput=scanner.nextLine();
